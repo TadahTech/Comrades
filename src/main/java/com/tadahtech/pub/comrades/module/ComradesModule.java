@@ -1,7 +1,16 @@
 package com.tadahtech.pub.comrades.module;
 
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+
 /**
- * @author Timothy Andis (TadahTech) on 5/12/2016.
+ * Created by legop on 5/13/2016.
  */
-public interface ComradesModule {
+public abstract class ComradesModule implements IComradesModule, Listener {
+
+    public String name;
+
+    public ComradesModule(JavaPlugin jp){
+
+    }
 }
