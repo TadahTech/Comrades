@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ModuleTest extends ComradesModule{
     public ModuleTest(JavaPlugin jp) {
         super(jp);
-        jp.getServer().getPluginManager().registerEvents(this, jp);
+        super.plugin.getServer().getPluginManager().registerEvents(this, super.plugin);
         setName("Awesome Test Module");
     }
 

@@ -9,8 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public abstract class ComradesModule implements IComradesModule, Listener {
 
     public String name;
+    protected JavaPlugin plugin;
 
     public ComradesModule(JavaPlugin jp){
-
+        plugin = jp;
     }
 }

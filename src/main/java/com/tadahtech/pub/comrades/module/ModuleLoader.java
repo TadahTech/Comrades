@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
 /**
  * Created by legop on 5/12/2016.
  */
-public class ModuleLoader extends ClassLoader {
+public class ModuleLoader {
 
     /**
      * Loads the IComradesModule from the jar, instantiating the new instance with the argument of a javaplugin.
