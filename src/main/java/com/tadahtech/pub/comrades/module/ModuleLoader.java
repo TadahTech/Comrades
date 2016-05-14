@@ -25,9 +25,15 @@ public class ModuleLoader {
         Class loadedClass = loader.loadClass(clazzbin);
         System.out.println("Loaded class: " + loadedClass.getName());
         Constructor con = loadedClass.getConstructor(JavaPlugin.class);
-        IComradesModule cm = (IComradesModule) con.newInstance(Comrades.getInstance());
+        if (con == null){
+            throw new ModuleDescription.InvalidModuleException("Main file does not have a default constructor with arguments of JavaPlugin.");
+        }
+        Object cm = con.newInstance(Comrades.getInstance());
+        if (!(cm instanceof IComradesModule)){
+            throw new ModuleDescription.InvalidModuleException("Main file does not extend ComradesModule.");
+        }
 
-        return cm;
+        return (IComradesModule) cm;
     }
 
     /**

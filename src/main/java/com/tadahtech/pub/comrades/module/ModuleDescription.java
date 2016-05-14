@@ -105,7 +105,7 @@ public class ModuleDescription {
     /**
      * Thrown when the description is invalid.
      */
-    private class InvalidModuleException extends Exception {
+    public static class InvalidModuleException extends Exception {
 
         public InvalidModuleException(String s){
             super(s);
