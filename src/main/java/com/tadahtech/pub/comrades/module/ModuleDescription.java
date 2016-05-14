@@ -63,10 +63,6 @@ public class ModuleDescription {
         loadMap(asMap(YAML.get().load(is)));
     }
 
-    private ModuleDescription(String path){
-        this.path = path;
-    }
-
     public String getPath(){
         return path;
     }

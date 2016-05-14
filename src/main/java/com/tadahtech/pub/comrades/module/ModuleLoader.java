@@ -55,8 +55,7 @@ public class ModuleLoader {
             JarFile jar = new JarFile(f);
             JarEntry je = jar.getJarEntry("module.yml");
             if (je == null){
-                System.out.println("Jar does not contain module.yml: " + jar.getName());
-                continue;
+                throw new ModuleDescription.InvalidModuleException("Jar does not contain module.yml");
             }
             InputStream is = jar.getInputStream(je);
 
