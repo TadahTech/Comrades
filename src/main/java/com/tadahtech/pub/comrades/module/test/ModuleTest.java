@@ -1,6 +1,7 @@
 package com.tadahtech.pub.comrades.module.test;
 
 import com.tadahtech.pub.comrades.module.ComradesModule;
+import com.tadahtech.pub.comrades.module.commands.ModuleCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,7 +13,10 @@ public class ModuleTest extends ComradesModule{
     public ModuleTest(JavaPlugin jp) {
         super(jp);
         super.plugin.getServer().getPluginManager().registerEvents(this, super.plugin);
-        setName("Awesome Test Module");
+        setName("Test");
+        super.cmd = new ModuleCommand(super.plugin, super.name);
+        super.cmd.registerCommand(new ModuleTestCommand());
+        new ModuleCommand.ModuleHelpCommand(super.cmd.getCommands());
     }
 
     @Override

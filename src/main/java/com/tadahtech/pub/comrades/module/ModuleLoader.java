@@ -39,7 +39,7 @@ public class ModuleLoader {
     /**
      * Load all of the modules in the modules dir.
      * Loops through all files in the modules dir, every file that ends with '.jar' is checked to see if it contains a module.yml
-     * If it does, it instantiates the module, adding it to the map in @link{Comrades.jar}
+     * If it does, it instantiates the module, adding it to the map in @link{Comrades.java}
      * @throws Exception
      * @throws com.tadahtech.pub.comrades.module.ModuleDescription.InvalidModuleException - When the module.yml is not present, or is invalid.
      */
