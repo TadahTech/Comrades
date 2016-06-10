@@ -1,11 +1,14 @@
 package com.tadahtech.pub.comrades.module.commands;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import com.tadahtech.pub.comrades.Comrades;
+import org.bukkit.Bukkit;
+import org.bukkit.command.*;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -16,7 +19,28 @@ public class ModuleCommand implements CommandExecutor {
     private static final Map<String, IModuleCommand> commands = Maps.newHashMap();
 
     public ModuleCommand(JavaPlugin jp, String name){
-        jp.getCommand(name).setExecutor(this);
+        try {
+            Field f = ((SimplePluginManager)Comrades.getInstance().getServer().getPluginManager()).getClass().getDeclaredField("commandMap");
+            f.setAccessible(true);
+            CommandMap cmap = (CommandMap)f.get(Bukkit.getServer().getPluginManager());
+            CCommand cmd = new CCommand(name, this);
+            cmap.register(cmd.getName(), cmd);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public ModuleCommand(JavaPlugin jp, String name, String[] aliases){
+        try {
+            Field f = ((SimplePluginManager)Comrades.getInstance().getServer().getPluginManager()).getClass().getDeclaredField("commandMap");
+            f.setAccessible(true);
+            CommandMap cmap = (CommandMap)f.get(Bukkit.getServer().getPluginManager());
+            Command cmd = new CCommand(name, this);
+            cmd.setAliases(Lists.newArrayList(aliases));
+            cmap.register(cmd.getName(), cmd);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -83,6 +107,24 @@ public class ModuleCommand implements CommandExecutor {
             help[commands.size()+2] = trailing;
             sender.sendMessage(help);
         }
+    }
+
+    private static final class CCommand extends Command {
+
+        private CommandExecutor exe = null;
+
+        protected CCommand(String name, CommandExecutor exe) {
+            super(name);
+            this.exe = exe;
+        }
+
+        public boolean execute(CommandSender sender, String commandLabel,String[] args) {
+            if(exe != null){
+                exe.onCommand(sender, this, commandLabel,args);
+            }
+            return false;
+        }
+
     }
 
 }

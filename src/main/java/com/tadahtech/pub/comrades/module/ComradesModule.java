@@ -16,4 +16,8 @@ public abstract class ComradesModule implements IComradesModule, Listener {
     public ComradesModule(JavaPlugin jp){
         this.plugin = jp;
     }
+
+    public JavaPlugin getPlugin(){
+        return plugin;
+    }
 }

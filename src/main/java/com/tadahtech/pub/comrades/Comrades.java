@@ -14,7 +14,7 @@ public class Comrades extends JavaPlugin {
 
     private static Comrades instance;
 
-    private boolean test = false;
+    private boolean test = true;
 
     private Map<Class<? extends IComradesModule>, IComradesModule> modules;
 
@@ -30,7 +30,7 @@ public class Comrades extends JavaPlugin {
             }
         }
         try {
-            ModuleLoader.loadModules();
+            ModuleLoader.loadModules2();
         } catch (Exception e){
             e.printStackTrace();
         }

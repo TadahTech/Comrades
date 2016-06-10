@@ -11,5 +11,10 @@ public interface IComradesModule {
 
     String getPurpose();
 
+    void start();
+
+    void cleanup();
+
+    void end();
 
 }
