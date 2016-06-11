@@ -30,7 +30,7 @@ public class Comrades extends JavaPlugin {
             }
         }
         try {
-            ModuleLoader.loadModules2();
+            ModuleLoader.loadModules();
         } catch (Exception e){
             e.printStackTrace();
         }

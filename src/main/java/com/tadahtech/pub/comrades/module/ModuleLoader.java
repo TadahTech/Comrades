@@ -19,28 +19,19 @@ public class ModuleLoader {
 
     /**
      * Loads the IComradesModule from the jar, instantiating the new instance with the argument of a javaplugin.
-     * @param clazzbin - The path to the main class.
+     * @param loadedClass - The path to the main class.
      * @return - The loaded module.
      * @throws Exception
      */
-    private static IComradesModule instantiateModule(File file, String clazzbin) throws Exception{
-        ModuleClassLoader loader;
-        if (file != null){
-            loader = new ModuleClassLoader(file, Comrades.getInstance().getClass().getClassLoader(), clazzbin);
-        } else {
-            loader = new ModuleClassLoader(Comrades.getInstance().getClass().getClassLoader(), clazzbin);
-        }
+    private static IComradesModule instantiateModule(Class loadedClass) throws Exception{
 
-        Class loadedClass = null;
-        try {
-            loadedClass = Class.forName(clazzbin);
-        } catch (ClassNotFoundException | NoClassDefFoundError e){
-            loadedClass = loader.loadClass(clazzbin);
-        }
         System.out.println("Loaded class: " + loadedClass.getName());
-        Constructor con = loadedClass.getConstructor(JavaPlugin.class);
-        if (con == null){
+        Constructor con;
+        try {
+            con = loadedClass.getConstructor(JavaPlugin.class);
+        } catch (NoSuchMethodException e){
             throw new ModuleDescription.InvalidModuleException("Main file does not have a default constructor with arguments of JavaPlugin.");
+
         }
         Object cm = con.newInstance(Comrades.getInstance());
         if (!(cm instanceof IComradesModule)){
@@ -111,7 +102,12 @@ public class ModuleLoader {
                 if (je.getName().endsWith(".class")){
                     String className = je.getName().replaceAll("/", "\\.");
                     className = className.replace(".class", "");
-                    Comrades.getInstance().registerModule(instantiateModule(f, className));
+                    Class c = loadClass(f, className);
+
+                    if (!IComradesModule.class.isAssignableFrom(c)){
+                        continue;
+                    }
+                    Comrades.getInstance().registerModule(instantiateModule(c));
                 }
             }
 
@@ -121,12 +117,28 @@ public class ModuleLoader {
     }
 
     public static void loadModule(String path) throws Exception{
-        Comrades.getInstance().registerModule(instantiateModule(null, path));
+        Comrades.getInstance().registerModule(instantiateModule(loadClass(null, path)));
+    }
 
+    private static Class loadClass(File file, String clazzbin) throws Exception{
+        ModuleClassLoader loader;
+        if (file != null){
+            loader = new ModuleClassLoader(file, Comrades.getInstance().getClass().getClassLoader(), clazzbin);
+        } else {
+            loader = new ModuleClassLoader(Comrades.getInstance().getClass().getClassLoader(), clazzbin);
+        }
+
+        Class loadedClass = null;
+        try {
+            loadedClass = Class.forName(clazzbin);
+        } catch (ClassNotFoundException | NoClassDefFoundError e){
+            loadedClass = loader.loadClass(clazzbin);
+        }
+        return loadedClass;
     }
 
 
-    public static final class ModuleClassLoader extends URLClassLoader {
+    private static final class ModuleClassLoader extends URLClassLoader {
 
         public ModuleClassLoader(File f, ClassLoader parent, String clazz) throws Exception {
 
@@ -144,7 +156,7 @@ public class ModuleLoader {
                 try {
                     comClass = jarClass.asSubclass(ComradesModule.class);
                 } catch (ClassCastException ex) {
-                    throw new InvalidPluginException("main class `" + clazz + "' does not extend JavaPlugin", ex);
+                    //throw new InvalidPluginException("main class `" + clazz + "' does not extend JavaPlugin", ex);
                 }
 
 
@@ -159,7 +171,7 @@ public class ModuleLoader {
             try {
                 Class<?> jarClass;
                 try {
-                    jarClass = Class.forName(clazz, true, this);
+                    jarClass = Class.forName(clazz, false, this);
                 } catch (ClassNotFoundException ex) {
                     throw new InvalidPluginException("Cannot find main class `" + clazz + "'", ex);
                 }
@@ -168,7 +180,7 @@ public class ModuleLoader {
                 try {
                     comClass = jarClass.asSubclass(ComradesModule.class);
                 } catch (ClassCastException ex) {
-                    throw new InvalidPluginException("main class `" + clazz + "' does not extend JavaPlugin", ex);
+                    //throw new InvalidPluginException("main class `" + clazz + "' does not extend JavaPlugin", ex);
                 }
 
 
