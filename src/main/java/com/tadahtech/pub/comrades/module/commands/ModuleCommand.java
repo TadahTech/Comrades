@@ -35,7 +35,7 @@ public class ModuleCommand implements CommandExecutor {
             Field f = ((SimplePluginManager)Comrades.getInstance().getServer().getPluginManager()).getClass().getDeclaredField("commandMap");
             f.setAccessible(true);
             CommandMap cmap = (CommandMap)f.get(Bukkit.getServer().getPluginManager());
-            Command cmd = new CCommand(name, this);
+            CCommand cmd = new CCommand(name, this);
             cmd.setAliases(Lists.newArrayList(aliases));
             cmap.register(cmd.getName(), cmd);
         } catch (Exception e){
@@ -47,7 +47,12 @@ public class ModuleCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String currentAlias, String[] args){
         if (commands.containsKey(cmd.getName())){
             IModuleCommand mc = commands.get(cmd.getName());
-            mc.execute(sender, args);
+            if (sender.hasPermission(mc.getPermission()) || mc.getPermission().equalsIgnoreCase("")) {
+                mc.execute(sender, args);
+            } else {
+                sender.sendMessage("You do not have permission to use that command.");
+            }
+
         }
         return true;
     }
@@ -120,7 +125,7 @@ public class ModuleCommand implements CommandExecutor {
 
         public boolean execute(CommandSender sender, String commandLabel,String[] args) {
             if(exe != null){
-                exe.onCommand(sender, this, commandLabel,args);
+                exe.onCommand(sender, this, commandLabel, args);
             }
             return false;
         }
